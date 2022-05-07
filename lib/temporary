@@ -4,39 +4,12 @@
 // can be found in the LICENSE file.
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:get/get.dart';
-// import 'main.dart';
 
-class AniController extends GetxController with GetSingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class AniController extends GetxController{
 
-  @override
-  void onInit(){
-    _controller = AnimationController(vsync:this);
-    super.onInit();
-  }
-  @override
-  void onClose(){
-    _controller.dispose();
-    super.onClose();
-  }
-
-  void _defineControllerDuration1() {
-    _controller.duration = const Duration(milliseconds: 1000);
-  }
-  void _defineControllerDuration2() {
-    _controller.duration = const Duration(milliseconds: 1000);
-  }
-  Future<void> _playAnimation() async {
-    try {
-      _defineControllerDuration1();
-      await _controller.forward().orCancel;
-      _defineControllerDuration2();
-      await _controller.reverse().orCancel;
-    } on TickerCanceled {
-      // the animation got canceled, probably because we were disposed
-    }
-  }
+  
 
 }
 
@@ -184,3 +157,63 @@ class StaggerAnimation extends StatelessWidget {
   }
 }
 
+
+class StaggerDemo extends StatefulWidget {
+  const StaggerDemo({Key? key}) : super(key: key);
+  @override
+  _StaggerDemoState createState() => _StaggerDemoState();
+}
+class _StaggerDemoState extends State<StaggerDemo>
+    with TickerProviderStateMixin {
+
+  @override
+  Widget build(BuildContext context) {
+    timeDilation = 1.0; // 1.0 is normal animation speed.
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Staggered Animation'),
+      ),
+      body: 
+      // GestureDetector(
+      //   behavior: HitTestBehavior.opaque,
+      //   onTap: () {
+      //     // _defineControllerDuration1();
+      //     _playAnimation();
+      //     // _defineControllerDuration2();
+      //     // _playBackAnimation();
+      //   },
+      //   child: 
+        Center(
+          child: Container(
+            width: 300.0,
+            height: 300.0,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.1),
+              border: Border.all(
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
+            child: Center(
+              child: StaggerAnimation(controller: _controller.view),
+            ),
+          ),
+        ),
+      // ),
+      floatingActionButton: FloatingActionButton(
+          // When the user taps the button
+          onPressed: () {
+            // Use setState to rebuild the widget with new values.
+            _playAnimation();
+          },
+          child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+void main() {
+  runApp(
+    const MaterialApp(
+      home: StaggerDemo(),
+    ),
+  );
+}

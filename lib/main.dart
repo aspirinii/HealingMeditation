@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:vibration/vibration.dart';
+import 'package:get/get.dart';
 import 'dart:async';
 import 'VibCol.dart';
-import 'other_widget.dart';
+// import 'other_widget.dart';
 import 'breath_animation.dart';
 
 void main() => runApp(GetMaterialApp(home: Home()));
 
-class Controller extends GetxController{
+class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   var timeSec = 0;
   var timeMin = 0;
   var timeMinRx = 0.obs;
@@ -20,9 +20,49 @@ class Controller extends GetxController{
   var full = 1.obs;
   var exhale = 5.obs;
   var empty = 0.obs;
+  // ignore: unused_field
   late Timer _timer;
   var _timeSum = 10.obs;
   var _cycle = 3.obs;
+
+
+  late AnimationController _controller;
+
+  @override
+  void onInit(){
+    _controller = AnimationController(vsync:this);
+    super.onInit();
+  }
+  @override
+  void onClose(){
+    _controller.dispose();
+    super.onClose();
+  }
+  // int inhalefullforAni  = inhale.value + full.value;
+  // int exhaleforAni = exhale.value;
+
+  void _defineControllerDuration1() {
+    int inhalefullforAni  = (inhale.value + full.value)*1000;
+    _controller.duration = Duration(milliseconds: inhalefullforAni);
+  }
+  void _defineControllerDuration2() {
+    int exhaleforAni = exhale.value*1000;
+    _controller.duration = Duration(milliseconds: exhaleforAni);
+  }
+
+  Future<void> _playAnimation() async {
+    try {
+      _defineControllerDuration1();
+      await _controller.forward().orCancel;
+      _defineControllerDuration2();
+      await _controller.reverse().orCancel;
+    } on TickerCanceled {
+      // the animation got canceled, probably because we were disposed
+    }
+  }
+
+
+
   void startTimer() {
     _timeSum.value = cycle.value * (inhale.value + full.value + exhale.value + empty.value);
     // int tranferValue = cycle.value;
@@ -58,8 +98,6 @@ class Controller extends GetxController{
 
   
   increment(a) {
-      /// The default vibration duration is 500ms.
-  /// Amplitude is a range from 1 to 255, if supported.
     a++;
     timeSum();
   }
@@ -92,6 +130,7 @@ class Home extends StatelessWidget {
 
     // Instantiate your class using Get.put() to make it available for all "child" routes there.
     final Controller c = Get.put(Controller());
+    // final AniController c2 = Get.put(AniController());
 
     return Scaffold(
       // Use Obx(()=> to update Text() whenever count is changed.
@@ -231,7 +270,7 @@ class Home extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-  
+                          c._playAnimation();
                           c.timerWork();
                           c.startTimer();
                         },
@@ -283,5 +322,62 @@ class Other extends StatelessWidget {
   Widget build(context){
      // Access the updated count variable
     return Scaffold(body: Center(child: Text("${c.count}")));
+  }
+}
+
+
+class StaggerDemo extends StatefulWidget {
+  const StaggerDemo({Key? key}) : super(key: key);
+  @override
+  _StaggerDemoState createState() => _StaggerDemoState();
+}
+class _StaggerDemoState extends State<StaggerDemo>
+    with TickerProviderStateMixin {
+
+  final Controller c = Get.put(Controller());
+
+
+  @override
+  Widget build(BuildContext context) {
+    // timeDilation = 1.0; // 1.0 is normal animation speed.
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Staggered Animation'),
+      ),
+      body: 
+      // GestureDetector(
+      //   behavior: HitTestBehavior.opaque,
+      //   onTap: () {
+      //     // _defineControllerDuration1();
+      //     _playAnimation();
+      //     // _defineControllerDuration2();
+      //     // _playBackAnimation();
+      //   },
+      //   child: 
+        Center(
+          child: Container(
+            width: 300.0,
+            height: 300.0,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.1),
+              border: Border.all(
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
+            child: Center(
+              child: StaggerAnimation(controller: c._controller.view),
+            ),
+          ),
+        ),
+      // ),
+      floatingActionButton: FloatingActionButton(
+          // When the user taps the button
+          onPressed: () {
+            // Use setState to rebuild the widget with new values.
+            // c2._playAnimation();
+          },
+          child: const Icon(Icons.play_arrow),
+      ),
+    );
   }
 }
