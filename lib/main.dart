@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
@@ -8,7 +10,12 @@ import 'VibCol.dart';
 import 'breath_animation.dart';
 import 'dart:ui';
 
-void main() => runApp(GetMaterialApp(home: Home()));
+void main(){
+  runApp(GetMaterialApp(
+  theme :ThemeData(scaffoldBackgroundColor: const Color(0xFFF6F5FF)),
+  home: const Home()
+  ));
+}
 
 class WindowsController extends GetxController{
   double physicalWidth = Get.width;
@@ -27,18 +34,20 @@ class WindowsController extends GetxController{
   //Safe area in logical pixels
   late double safeWidth = (logicalWidth - paddingLeft - paddingRight);
   late double safeHeight = (logicalHeight - paddingTop - paddingBottom);
+  late double safeMinSize = min(safeWidth, safeHeight);
   
-  RxDouble _visible = 1.0.obs;
 }
 
 
 class Controller extends GetxController with GetSingleTickerProviderStateMixin{
+  RxBool _visible = true.obs;
+  RxBool _isRunning = false.obs;
   var timeSec = 0;
   var timeMin = 0;
   var timeMinRx = 0.obs;
   var timeSecRx = 0.obs;
   var count = 0.obs;
-  var cycle = 1.obs;
+  var cycle = 2.obs;
   var inhale = 3.obs;
   var full = 0.obs;
   var exhale = 3.obs;
@@ -54,12 +63,14 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   @override
   void onInit(){
     _controller = AnimationController(vsync:this);
+    timeSum();
     
     super.onInit();
   }
   @override
   void onClose(){
     _controller.dispose();
+    vibStop();
     super.onClose();
   }
   // int inhalefullforAni  = inhale.value + full.value;
@@ -70,13 +81,16 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
     _controller.duration = Duration(milliseconds: inhalefullforAni);
   }
   void _defineControllerDuration2() {
-    int exhaleforAni = exhale.value*1000;
+    int exhaleforAni = (exhale.value + empty.value)*1000;
     _controller.duration = Duration(milliseconds: exhaleforAni);
   }
 
   Future<void> _playAnimation() async {
     for(int i=0; i < cycle.value; i++){  
       try {
+        if(!_isRunning.value){
+          return;
+        }
         _defineControllerDuration1();
         await _controller.forward().orCancel;
         _defineControllerDuration2();
@@ -88,67 +102,119 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   }
 
 
-
   void startTimer() {
-    _timeSum.value = cycle.value * (inhale.value + full.value + exhale.value + empty.value);
-    // int tranferValue = cycle.value;
-    // _cycle.value = tranferValue;
+      _timeSum.value = cycle.value * (inhale.value + full.value + exhale.value + empty.value);
+      const oneSec = Duration(seconds: 1);
+      _timer = Timer.periodic(oneSec, (_timer){
+            if (_timeSum.value == 0) {
+                _visible.value =true;
+                _isRunning.value = false;
+                stopTimer();
+            } else {
+                _timeSum.value--;
+                timeSumInRunning();
+          }
+        }
+      );
+  }
 
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(oneSec,(Timer timer) {
-          if (_timeSum.value == 0) {
-              timer.cancel();
-          } else {
-              _timeSum.value--;
-              _cycle.value = (_timeSum.value/(inhale.value + full.value + exhale.value + empty.value)).toInt() + 1;
-          }   
-          
-        },
-    );
+  void stopTimer(){
+      _timer.cancel();
+      timeSum();
+      return;
   }
 
   var inhaleR = 0.obs;
   var exhaleR = 0.obs;
 
   void timerWork() {
-    int _cycle = cycle.value;
+    int _cycle1 = cycle.value;
     int _inhale = inhale.value;
     int _exhale = exhale.value;
     int _full = full.value;
-
-    HapticVib(_cycle, _inhale, _full, _exhale);
-
+    int _empty = empty.value;
+    HapticVib(_cycle1, _inhale, _full, _exhale, _empty);
   }
-
-
-
   
   increment(a) {
+    if(_isRunning.value){
+      return;
+    }
     a++;
     timeSum();
   }
   decrement(b){
+    if(_isRunning.value){
+      return;
+    }
+    if (b.value<=0){
+      b.value = 0;
+      return;
+    }
     b--;
     timeSum();
   } 
   timeSum(){
-
     timeSec = cycle.value * (inhale.value + full.value + exhale.value + empty.value);
     timeMin = Duration(seconds: timeSec).inMinutes;
     timeMinRx.value = timeMin;
     timeSecRx.value = timeSec%60;
+    _cycle.value = timeSec~/(inhale.value + full.value + exhale.value + empty.value);
   }
-
-
-
+  timeSumInRunning(){
+    _cycle.value = (_timeSum.value~/(inhale.value + full.value + exhale.value + empty.value) )+ 1;
+    timeSec = _timeSum.value;
+    timeMin = Duration(seconds: timeSec).inMinutes;
+    timeMinRx.value = timeMin;
+    timeSecRx.value = timeSec%60;
+  }
   vibStop(){
     Vibration.cancel();
   }
+
+  void startBtn(){
+    if (_isRunning.value || !_visible.value){
+      return;
+    }else{
+      _isRunning.value = true;
+      _playAnimation();
+      timerWork(); // vibration
+      startTimer();
+      _visible.value = false;                  
+    }
+  }
+  void stopBtn(){
+    if (!_visible.value){
+      return;
+    }
+    _isRunning.value = false;
+    _visible.value = true;
+    stopTimer();
+    vibStop();
+    stopAnimation();
+
+  }
+
+  Future<void>  stopAnimation() async{
+    for(int i=0; i < cycle.value; i++){  
+      try {
+        _controller.isAnimating
+        ? _controller.stop()
+        : _controller.reverse(from : 0.3);
+      } on TickerCanceled {
+          // the animation got canceled, probably because we were disposed
+      }
+    }
+    // _controller.reverse(from : 0.1);
+  }
+
 
 
 }
 
 class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
   
 
   @override
@@ -161,21 +227,31 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       // Use Obx(()=> to update Text() whenever count is changed.
-      appBar: AppBar(title: Obx(() => Text("cycle: ${c._cycle} Timer:${c._timeSum} , ${c2._visible.value}"
-      ))),
+      // appBar: AppBar(title: Obx(() => Text("cycle: ${c._cycle} Timer:${c._timeSum} , ${c._isRunning.value}"
+      // ))),
 
-      body:Stack(
-        children: [
-          StaggerDemo(),
-          Obx(() => AnimatedOpacity(
-            duration: const Duration(milliseconds: 500),
-            opacity: c2._visible.value,
-            child: MenuWidget()
+      body:GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: (){
+          if(c._isRunning.value){
+          c._visible.value = !c._visible.value;
+          }else{
+            c._visible.value = true;
+          }
+        },
+        child: 
+        Stack(
+          children: [
+            const StaggerDemo(),
+            Obx(() => AnimatedOpacity(
+              duration: const Duration(milliseconds: 500),
+              opacity: c._visible.value ? 1 : 0,
+              child: MenuWidget()
+              )
             )
-          )
-        ],
-      ),
-
+          ],
+        ),
+      )
     );
   }
 }
@@ -207,32 +283,29 @@ class _StaggerDemoState extends State<StaggerDemo>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: (){
-          c2._visible.value = 1;
-        },
-        child: 
+      body:
       Center(
-              child: StaggerAnimation(c2.safeWidth, c2.safeHeight, controller: c._controller.view),
+              child: StaggerAnimation(c2.safeMinSize, controller: c._controller.view),
             ),
-    ));
+    );
   }
 }
 
 class MenuWidget extends StatelessWidget {
   // You can ask Get to find a Controller that is being used by another page and redirect you to it.
+  MenuWidget({Key? key}) : super(key: key);
   final Controller c = Get.find();
   final WindowsController c2 = Get.put(WindowsController());
+
+
 
 
   @override
   Widget build(context){
      // Access the updated count variable
     return Center(
-
             child: Container(
-              color : Colors.grey.withOpacity(0.5),
+              color : Colors.grey.withOpacity(0.2),
               child: SizedBox( //responsive.. 작은폰엔 어떻게 적용하는가
                 height: 500,
                 width: 300,
@@ -240,9 +313,15 @@ class MenuWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Obx(() => Text("Estimate Time : ${c.timeMinRx} : ${c.timeSecRx}")),
+                      const Icon(CupertinoIcons.clock),Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(CupertinoIcons.arrow_2_circlepath_circle),Obx(() => Text("   ${c._cycle} ")),
                     ],
                   ),
                   Row(
@@ -253,17 +332,17 @@ class MenuWidget extends StatelessWidget {
                         onPressed: () {
                           c.decrement(c.cycle);
                         },
-                      icon: Icon(CupertinoIcons.chevron_left),
+                      icon: const Icon(CupertinoIcons.chevron_left),
                       splashColor : Colors.red,
                       splashRadius: 10,
                       hoverColor : Colors.blue,
                     ),
-                    Obx(() => Text("${c.cycle} Cycle")),
+                    const Icon(CupertinoIcons.arrow_clockwise),Obx(() => Text("${c.cycle}")),
                     IconButton(
                         onPressed: () {
                           c.increment(c.cycle);
                         },
-                      icon: Icon(CupertinoIcons.chevron_right),
+                      icon: const Icon(CupertinoIcons.chevron_right),
                       splashColor : Colors.red,
                       splashRadius: 10,
                       hoverColor : Colors.blue,
@@ -275,81 +354,81 @@ class MenuWidget extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("Image"),
+                        const Icon(CupertinoIcons.arrow_down_right_arrow_up_left),
                         IconButton(
                         onPressed: () {
                           c.increment(c.inhale);
                         },
-                        icon: Icon(CupertinoIcons.chevron_up
+                        icon: const Icon(CupertinoIcons.chevron_up
                         ),),
                         Obx(() => Text("${c.inhale}")),
                         IconButton(
                         onPressed: () {
                           c.decrement(c.inhale);
                         },
-                        icon: Icon(CupertinoIcons.chevron_down
+                        icon: const Icon(CupertinoIcons.chevron_down
                         ),),
-                        Text("Inhale"),
+                        const Text("Inhale"),
                       ],
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("Image"),
+                        const Icon(CupertinoIcons.heart_fill),
                         IconButton(
                         onPressed: () {
                           c.increment(c.full);
                         },
-                        icon: Icon(CupertinoIcons.chevron_up
+                        icon: const Icon(CupertinoIcons.chevron_up
                         ),),
                         Obx(() => Text("${c.full}")),
                         IconButton(
                         onPressed: () {
                           c.decrement(c.full);
                         },
-                        icon: Icon(CupertinoIcons.chevron_down
+                        icon: const Icon(CupertinoIcons.chevron_down
                         ),),
-                        Text("full(1,2,4,5,10)"),
+                        const Text("full"),
                       ],
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("Image"),
+                        const Icon(CupertinoIcons.arrow_up_left_arrow_down_right),
                         IconButton(
                         onPressed: () {
                           c.increment(c.exhale);
                         },
-                        icon: Icon(CupertinoIcons.chevron_up
+                        icon: const Icon(CupertinoIcons.chevron_up
                         ),),
                         Obx(() => Text("${c.exhale}")),
                         IconButton(
                         onPressed: () {
                           c.decrement(c.exhale);
                         },
-                        icon: Icon(CupertinoIcons.chevron_down
+                        icon: const Icon(CupertinoIcons.chevron_down
                         ),),
-                        Text("Exhale"),
+                        const Text("Exhale"),
                       ],
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("Image"),
+                        const Icon(CupertinoIcons.heart),
                         IconButton(
                         onPressed: () {
                           c.increment(c.empty);
                         },
-                        icon: Icon(CupertinoIcons.chevron_up
+                        icon: const Icon(CupertinoIcons.chevron_up
                         ),),
                         Obx(() => Text("${c.empty}")),
                         IconButton(
                         onPressed: () {
                           c.decrement(c.empty);
                         },
-                        icon: Icon(CupertinoIcons.chevron_down,
+                        icon: const Icon(CupertinoIcons.chevron_down,
                         ),),
-                        Text("empty"),
+                        const Text("empty"),
                       ],
                     ),
 
@@ -359,35 +438,30 @@ class MenuWidget extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          c._playAnimation();
-                          c.timerWork();
-                          c.startTimer();
-                          c2._visible.value = 0;
+                          c.startBtn();
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.play_arrow_sharp,
                           size: 30,
                         color: Colors.white),
                         style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(20),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20),
                           primary: Colors.transparent, // <-- Button color
                           onPrimary: Colors.red, // <-- Splash color
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          c.decrement(c.count);
-                          c.vibStop();
-                          // c.stopTimer();
+                          c.stopBtn();
                         },
-                        child: Icon(
-                          Icons.stop_circle_sharp,
+                        child: const Icon(
+                          Icons.stop,
                           size: 30,
                         color: Colors.white),
                         style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(20),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20),
                           primary: Colors.transparent, // <-- Button color
                           onPrimary: Colors.red, // <-- Splash color
                         ),

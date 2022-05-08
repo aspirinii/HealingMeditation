@@ -9,29 +9,29 @@ import 'dart:ui';
 
 
 class StaggerAnimation extends StatelessWidget {
-  StaggerAnimation(safeWidth,  safeHeight,{Key? key, required this.controller, double test = 0})
+  StaggerAnimation(safeMinSize,{Key? key, required this.controller, double test = 0})
       :
         // Each animation defined here transforms its value during the subset
         // of the controller's duration defined by the animation's interval.
         // For example the opacity animation transforms its value during
         // the first 10% of the controller's duration.
         
-        opacity = Tween<double>(
-          begin: 1,
-          end: 1.0,
-        ).animate(
-          CurvedAnimation(
-            parent: controller,
-            curve: const Interval(
-              0.0,
-              0.100,
-              curve: Curves.ease,
-            ),
-          ),
-        ),
+        // opacity = Tween<double>(
+        //   begin: 1,
+        //   end: 1.0,
+        // ).animate(
+        //   CurvedAnimation(
+        //     parent: controller,
+        //     curve: const Interval(
+        //       0.0,
+        //       0.100,
+        //       curve: Curves.easeInCirc,
+        //     ),
+        //   ),
+        // ),
         width = Tween<double>(
-          begin: 50.0,
-          end: safeWidth,
+          begin: safeMinSize/5,
+          end: safeMinSize,
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -42,45 +42,32 @@ class StaggerAnimation extends StatelessWidget {
             ),
           ),
         ),
-        height = Tween<double>(begin: 50.0, end: safeHeight).animate(
+        height = Tween<double>(begin: safeMinSize/5, end: safeMinSize).animate(
           CurvedAnimation(
             parent: controller,
             curve: const Interval(
               0,
               1,
-              curve: Curves.ease,
-            ),
-          ),
-        ),
-        padding = EdgeInsetsTween(
-          begin: const EdgeInsets.all(0),
-          end: const EdgeInsets.all(0),
-        ).animate(
-          CurvedAnimation(
-            parent: controller,
-            curve: const Interval(
-              0.250,
-              0.375,
-              curve: Curves.ease,
+              curve:Curves.ease,
             ),
           ),
         ),
         borderRadius = BorderRadiusTween(
-          begin: BorderRadius.circular(75.0),
-          end: BorderRadius.circular(0),
+          begin: BorderRadius.circular(safeMinSize*0.3),
+          end: BorderRadius.circular(safeMinSize*1.5),
         ).animate(
           CurvedAnimation(
             parent: controller,
             curve: const Interval(
-              0.375,
-              0.500,
+              0,
+              1,
               curve: Curves.ease,
             ),
           ),
         ),
         color1 = ColorTween(
-          begin: Colors.indigo[100],
-          end: Colors.orange[400],
+          begin:Color(0x55EDC2D8),
+          end:Color(0xFFEDC2D8),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -92,8 +79,8 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         color2 = ColorTween(
-          begin: Colors.blueGrey,
-          end: Colors.redAccent,
+          begin: Color(0x55BABAD3),
+          end: Color(0xFFBABAD3),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -106,10 +93,9 @@ class StaggerAnimation extends StatelessWidget {
         ),
         super(key: key);
   final Animation<double> controller;
-  final Animation<double> opacity;
+  // final Animation<double> opacity;
   final Animation<double> width;
   final Animation<double> height;
-  final Animation<EdgeInsets> padding;
   final Animation<BorderRadius?> borderRadius;
   final Animation<Color?> color1;
   final Animation<Color?> color2;
@@ -136,10 +122,7 @@ class StaggerAnimation extends StatelessWidget {
                 color2.value ?? Colors.red,
               ],
             ),
-            // border: Border.all(
-            //   color: Colors.indigo[300]!,
-            //   width: 3.0,
-            // ),
+
             borderRadius: borderRadius.value,
           ),
         ),
