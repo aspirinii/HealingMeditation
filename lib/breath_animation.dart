@@ -2,51 +2,20 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
-import 'dart:async';
+// import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'main.dart';
+import 'dart:ui';
 
-class AniController extends GetxController with GetSingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void onInit(){
-    _controller = AnimationController(vsync:this);
-    super.onInit();
-  }
-  @override
-  void onClose(){
-    _controller.dispose();
-    super.onClose();
-  }
-
-  void _defineControllerDuration1() {
-    _controller.duration = const Duration(milliseconds: 1000);
-  }
-  void _defineControllerDuration2() {
-    _controller.duration = const Duration(milliseconds: 1000);
-  }
-  Future<void> _playAnimation() async {
-    try {
-      _defineControllerDuration1();
-      await _controller.forward().orCancel;
-      _defineControllerDuration2();
-      await _controller.reverse().orCancel;
-    } on TickerCanceled {
-      // the animation got canceled, probably because we were disposed
-    }
-  }
-
-}
 
 class StaggerAnimation extends StatelessWidget {
-  StaggerAnimation({Key? key, required this.controller})
+  StaggerAnimation(safeWidth,  safeHeight,{Key? key, required this.controller, double test = 0})
       :
         // Each animation defined here transforms its value during the subset
         // of the controller's duration defined by the animation's interval.
         // For example the opacity animation transforms its value during
         // the first 10% of the controller's duration.
+        
         opacity = Tween<double>(
           begin: 1,
           end: 1.0,
@@ -62,7 +31,7 @@ class StaggerAnimation extends StatelessWidget {
         ),
         width = Tween<double>(
           begin: 50.0,
-          end: 150.0,
+          end: safeWidth,
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -73,7 +42,7 @@ class StaggerAnimation extends StatelessWidget {
             ),
           ),
         ),
-        height = Tween<double>(begin: 50.0, end: 150.0).animate(
+        height = Tween<double>(begin: 50.0, end: safeHeight).animate(
           CurvedAnimation(
             parent: controller,
             curve: const Interval(
@@ -98,7 +67,7 @@ class StaggerAnimation extends StatelessWidget {
         ),
         borderRadius = BorderRadiusTween(
           begin: BorderRadius.circular(75.0),
-          end: BorderRadius.circular(75.0),
+          end: BorderRadius.circular(0),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -144,6 +113,8 @@ class StaggerAnimation extends StatelessWidget {
   final Animation<BorderRadius?> borderRadius;
   final Animation<Color?> color1;
   final Animation<Color?> color2;
+
+
   // This function is called each time the controller "ticks" a new frame.
   // When it runs, all of the animation's values will have been
   // updated to reflect the controller's current value.

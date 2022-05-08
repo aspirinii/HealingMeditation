@@ -6,8 +6,31 @@ import 'dart:async';
 import 'VibCol.dart';
 // import 'other_widget.dart';
 import 'breath_animation.dart';
+import 'dart:ui';
 
 void main() => runApp(GetMaterialApp(home: Home()));
+
+class WindowsController extends GetxController{
+  double physicalWidth = Get.width;
+  double physicalHeight = Get.height; 
+  //Size in logical pixels
+  double logicalWidth = window.physicalSize.width  / Get.pixelRatio;
+  double logicalHeight = window.physicalSize.height  / Get.pixelRatio;
+  //Padding in physical pixels
+
+  //Safe area paddings in logical pixels
+  double paddingLeft = window.padding.left / window.devicePixelRatio;
+  double paddingRight = window.padding.right / window.devicePixelRatio;
+  double paddingTop = window.padding.top / window.devicePixelRatio;
+  double paddingBottom = window.padding.bottom / window.devicePixelRatio;
+
+  //Safe area in logical pixels
+  late double safeWidth = (logicalWidth - paddingLeft - paddingRight);
+  late double safeHeight = (logicalHeight - paddingTop - paddingBottom);
+  
+  RxDouble _visible = 1.0.obs;
+}
+
 
 class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   var timeSec = 0;
@@ -15,10 +38,10 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   var timeMinRx = 0.obs;
   var timeSecRx = 0.obs;
   var count = 0.obs;
-  var cycle = 3.obs;
-  var inhale = 5.obs;
-  var full = 1.obs;
-  var exhale = 5.obs;
+  var cycle = 1.obs;
+  var inhale = 3.obs;
+  var full = 0.obs;
+  var exhale = 3.obs;
   var empty = 0.obs;
   // ignore: unused_field
   late Timer _timer;
@@ -31,6 +54,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   @override
   void onInit(){
     _controller = AnimationController(vsync:this);
+    
     super.onInit();
   }
   @override
@@ -51,13 +75,15 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin{
   }
 
   Future<void> _playAnimation() async {
-    try {
-      _defineControllerDuration1();
-      await _controller.forward().orCancel;
-      _defineControllerDuration2();
-      await _controller.reverse().orCancel;
-    } on TickerCanceled {
-      // the animation got canceled, probably because we were disposed
+    for(int i=0; i < cycle.value; i++){  
+      try {
+        _defineControllerDuration1();
+        await _controller.forward().orCancel;
+        _defineControllerDuration2();
+        await _controller.reverse().orCancel;
+      } on TickerCanceled {
+        // the animation got canceled, probably because we were disposed
+      }
     }
   }
 
@@ -130,17 +156,80 @@ class Home extends StatelessWidget {
 
     // Instantiate your class using Get.put() to make it available for all "child" routes there.
     final Controller c = Get.put(Controller());
-    // final AniController c2 = Get.put(AniController());
+    final WindowsController c2 = Get.put(WindowsController());
+
 
     return Scaffold(
       // Use Obx(()=> to update Text() whenever count is changed.
-      appBar: AppBar(title: Obx(() => Text("cycle: ${c._cycle} Timer:${c._timeSum}"
+      appBar: AppBar(title: Obx(() => Text("cycle: ${c._cycle} Timer:${c._timeSum} , ${c2._visible.value}"
       ))),
 
       body:Stack(
         children: [
           StaggerDemo(),
-          Center(
+          Obx(() => AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: c2._visible.value,
+            child: MenuWidget()
+            )
+          )
+        ],
+      ),
+
+    );
+  }
+}
+
+// class Other extends StatelessWidget {
+//   // You can ask Get to find a Controller that is being used by another page and redirect you to it.
+//   final Controller c = Get.find();
+
+//   @override
+//   Widget build(context){
+//      // Access the updated count variable
+//     return Scaffold(body: Center(child: Text("${c.count}")));
+//   }
+// }
+
+
+class StaggerDemo extends StatefulWidget {
+  const StaggerDemo({Key? key}) : super(key: key);
+  @override
+  _StaggerDemoState createState() => _StaggerDemoState();
+}
+class _StaggerDemoState extends State<StaggerDemo>
+    with TickerProviderStateMixin {
+
+  final Controller c = Get.put(Controller());
+  final WindowsController c2 = Get.put(WindowsController());
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: (){
+          c2._visible.value = 1;
+        },
+        child: 
+      Center(
+              child: StaggerAnimation(c2.safeWidth, c2.safeHeight, controller: c._controller.view),
+            ),
+    ));
+  }
+}
+
+class MenuWidget extends StatelessWidget {
+  // You can ask Get to find a Controller that is being used by another page and redirect you to it.
+  final Controller c = Get.find();
+  final WindowsController c2 = Get.put(WindowsController());
+
+
+  @override
+  Widget build(context){
+     // Access the updated count variable
+    return Center(
 
             child: Container(
               color : Colors.grey.withOpacity(0.5),
@@ -273,6 +362,7 @@ class Home extends StatelessWidget {
                           c._playAnimation();
                           c.timerWork();
                           c.startTimer();
+                          c2._visible.value = 0;
                         },
                         child: Icon(
                           Icons.play_arrow_sharp,
@@ -306,78 +396,6 @@ class Home extends StatelessWidget {
                 ],
             ),
               )),
-          ),
-        ],
-      ),
-
-    );
-  }
-}
-
-class Other extends StatelessWidget {
-  // You can ask Get to find a Controller that is being used by another page and redirect you to it.
-  final Controller c = Get.find();
-
-  @override
-  Widget build(context){
-     // Access the updated count variable
-    return Scaffold(body: Center(child: Text("${c.count}")));
-  }
-}
-
-
-class StaggerDemo extends StatefulWidget {
-  const StaggerDemo({Key? key}) : super(key: key);
-  @override
-  _StaggerDemoState createState() => _StaggerDemoState();
-}
-class _StaggerDemoState extends State<StaggerDemo>
-    with TickerProviderStateMixin {
-
-  final Controller c = Get.put(Controller());
-
-
-  @override
-  Widget build(BuildContext context) {
-    // timeDilation = 1.0; // 1.0 is normal animation speed.
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Staggered Animation'),
-      ),
-      body: 
-      // GestureDetector(
-      //   behavior: HitTestBehavior.opaque,
-      //   onTap: () {
-      //     // _defineControllerDuration1();
-      //     _playAnimation();
-      //     // _defineControllerDuration2();
-      //     // _playBackAnimation();
-      //   },
-      //   child: 
-        Center(
-          child: Container(
-            width: 300.0,
-            height: 300.0,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
-              border: Border.all(
-                color: Colors.black.withOpacity(0.5),
-              ),
-            ),
-            child: Center(
-              child: StaggerAnimation(controller: c._controller.view),
-            ),
-          ),
-        ),
-      // ),
-      floatingActionButton: FloatingActionButton(
-          // When the user taps the button
-          onPressed: () {
-            // Use setState to rebuild the widget with new values.
-            // c2._playAnimation();
-          },
-          child: const Icon(Icons.play_arrow),
-      ),
-    );
+          );
   }
 }
