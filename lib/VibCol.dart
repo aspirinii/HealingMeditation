@@ -82,7 +82,7 @@ List<int> part3Inten(int sec){
   return vIntensities3;
 }
 
-void HapticVib(int cycle, int inhaleSec, int fullSec, int exhaleSec){
+void HapticVib(int cycle, int inhaleSec, int fullSec, int exhaleSec, int emptySec){
 
   List<int> vPattern1 =  part1Pattern(inhaleSec);
   List<int> vIntensities1 = part1Inten(inhaleSec);
@@ -93,8 +93,11 @@ void HapticVib(int cycle, int inhaleSec, int fullSec, int exhaleSec){
   List<int> vPattern3 =  part3Pattern(exhaleSec);
   List<int> vIntensities3 = part3Inten(exhaleSec);
 
-  var sumP = vPattern1 + vPattern2 + vPattern3;
-  var sumI = vIntensities1 + vIntensities2 + vIntensities3;
+    List<int> vPattern4 =  part2Pattern(emptySec);
+  List<int> vIntensities4 = part2Inten(emptySec);
+
+  var sumP = vPattern1 + vPattern2 + vPattern3 + vPattern4;
+  var sumI = vIntensities1 + vIntensities2 + vIntensities3 + vIntensities4 ;
   List<int>  combinePattern = [];
   List<int>  combineIntensities = [];
   for (int i=0; i<cycle; i++){

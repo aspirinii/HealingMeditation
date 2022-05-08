@@ -14,17 +14,6 @@ class AnimatedContainerApp extends StatefulWidget {
 
 class _AnimatedContainerAppState extends State<AnimatedContainerApp> {
 
-    // physicalWidth = physicalScreenSize.width;
-    // physicalHeight = physicalScreenSize.height; 
-
-  //Size in logical pixels
-    // logicalWidth = window.physicalSize.width / pixelRatio;
-    // logicalHeight = window.physicalSize.height / pixelRatio;
-
-  //Padding in physical pixels
-    // padding = window.padding;
-    // //Size in physical pixels
-  var physicalScreenSize = Get.size;
   double physicalWidth = Get.width;
   double physicalHeight = Get.height; 
   //Size in logical pixels
@@ -33,15 +22,6 @@ class _AnimatedContainerAppState extends State<AnimatedContainerApp> {
   //Padding in physical pixels
   double padding =0;
 
-  // //Safe area paddings in logical pixels
-  // double paddingLeft = 0;
-  // double paddingRight = 0;
-  // double paddingTop = 0;
-  // double paddingBottom = 0;
-
-  // //Safe area in logical pixels
-  // double safeWidth = 0;
-  // double safeHeight = 0;
 
   //Safe area paddings in logical pixels
     double paddingLeft = window.padding.left / window.devicePixelRatio;
