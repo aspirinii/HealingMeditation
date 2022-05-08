@@ -104,6 +104,7 @@ class StaggerAnimation extends StatelessWidget {
   // This function is called each time the controller "ticks" a new frame.
   // When it runs, all of the animation's values will have been
   // updated to reflect the controller's current value.
+  int safeMinSize = 200;
   Widget _buildAnimation(BuildContext context, Widget? child) {
     return Container(
       padding: const EdgeInsets.all(0),
@@ -111,20 +112,33 @@ class StaggerAnimation extends StatelessWidget {
       child: Opacity(
         opacity: 1,
         child: Container(
-          width: width.value,
-          height: height.value,
+          // width: width.value,
+          // height: height.value,
+          width: safeMinSize/5,
+          height: safeMinSize/5,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: [
-                color1.value ?? Colors.blue,
-                color2.value ?? Colors.red,
+                // color1.value ?? Colors.blue,
+                // color2.value ?? Colors.red,
+                Color(0xFFF6F5FF),
+                Color(0xFFF6F5FF),
               ],
             ),
-
-            borderRadius: borderRadius.value,
+            borderRadius: BorderRadius.circular(safeMinSize*0.3),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFFBABAD3).withOpacity(1),
+                spreadRadius: width.value/5,
+                blurRadius: width.value/7,
+                offset: Offset(0, 0),
+    // changes position of shadow
+              ),
+            ],
           ),
+          
         ),
       ),
     );
