@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.4
   get: ^4.6.1
   vibration: ^1.7.4-nullsafety.0
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

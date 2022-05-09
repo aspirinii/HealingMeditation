@@ -1,4 +1,3 @@
-
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
@@ -7,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
 
-
 class StaggerAnimation extends StatelessWidget {
-  StaggerAnimation(safeMinSize,{Key? key, required this.controller, double test = 0})
+  StaggerAnimation(safeMinSize,
+      {Key? key, required this.controller, double test = 0})
       :
         // Each animation defined here transforms its value during the subset
         // of the controller's duration defined by the animation's interval.
         // For example the opacity animation transforms its value during
         // the first 10% of the controller's duration.
-        
+
         // opacity = Tween<double>(
         //   begin: 1,
         //   end: 1.0,
@@ -30,8 +29,8 @@ class StaggerAnimation extends StatelessWidget {
         //   ),
         // ),
         width = Tween<double>(
-          begin: safeMinSize/5,
-          end: safeMinSize,
+          begin: safeMinSize / 5,
+          end: safeMinSize / 4,
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -42,19 +41,20 @@ class StaggerAnimation extends StatelessWidget {
             ),
           ),
         ),
-        height = Tween<double>(begin: safeMinSize/5, end: safeMinSize).animate(
+        height =
+            Tween<double>(begin: safeMinSize / 5, end: safeMinSize / 4).animate(
           CurvedAnimation(
             parent: controller,
             curve: const Interval(
               0,
               1,
-              curve:Curves.ease,
+              curve: Curves.ease,
             ),
           ),
         ),
         borderRadius = BorderRadiusTween(
-          begin: BorderRadius.circular(safeMinSize*0.3),
-          end: BorderRadius.circular(safeMinSize*1.5),
+          begin: BorderRadius.circular(safeMinSize * 0.3),
+          end: BorderRadius.circular(safeMinSize * 1.5),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -66,8 +66,8 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         color1 = ColorTween(
-          begin:Color(0x55EDC2D8),
-          end:Color(0xFFEDC2D8),
+          begin: const Color(0x55EDC2D8),
+          end: const Color(0xFFEDC2D8),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -79,8 +79,8 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         color2 = ColorTween(
-          begin: Color(0x55BABAD3),
-          end: Color(0xFFBABAD3),
+          begin: const Color(0x55BABAD3),
+          end: const Color(0xFFBABAD3),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -100,7 +100,6 @@ class StaggerAnimation extends StatelessWidget {
   final Animation<Color?> color1;
   final Animation<Color?> color2;
 
-
   // This function is called each time the controller "ticks" a new frame.
   // When it runs, all of the animation's values will have been
   // updated to reflect the controller's current value.
@@ -112,10 +111,10 @@ class StaggerAnimation extends StatelessWidget {
       child: Opacity(
         opacity: 1,
         child: Container(
-          // width: width.value,
-          // height: height.value,
-          width: safeMinSize/5,
-          height: safeMinSize/5,
+          width: width.value,
+          height: height.value,
+          // width: safeMinSize / 5,
+          // height: safeMinSize / 5,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
@@ -123,26 +122,40 @@ class StaggerAnimation extends StatelessWidget {
               colors: [
                 // color1.value ?? Colors.blue,
                 // color2.value ?? Colors.red,
-                Color(0xFFF6F5FF),
-                Color(0xFFF6F5FF),
+                // const Color(0xFF343148),
+                // ignore: prefer_const_constructors
+                const Color(0xFFF6F5FF),
+                const Color(0xFFD7C49E)
               ],
             ),
-            borderRadius: BorderRadius.circular(safeMinSize*0.3),
+            border: Border.all(
+              color: const Color(0xFFF6F5FF),
+              width: 0.2,
+            ),
+            // borderRadius: BorderRadius.circular(safeMinSize * 0.3),
+            borderRadius: borderRadius.value,
             boxShadow: [
               BoxShadow(
-                color: Color(0xFFBABAD3).withOpacity(1),
-                spreadRadius: width.value/5,
-                blurRadius: width.value/7,
-                offset: Offset(0, 0),
-    // changes position of shadow
+                color: const Color(0xFFD7C49E).withOpacity(1),
+                spreadRadius: width.value / 3,
+                blurRadius: width.value / 7,
+                offset: const Offset(0, 0),
+                // changes position of shadow
+              ),
+              BoxShadow(
+                color: const Color(0xFFD7C49E).withOpacity(1),
+                spreadRadius: width.value / 10,
+                blurRadius: width.value / 7,
+                offset: const Offset(0, 0),
+                // changes position of shadow
               ),
             ],
           ),
-          
         ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -151,4 +164,3 @@ class StaggerAnimation extends StatelessWidget {
     );
   }
 }
-

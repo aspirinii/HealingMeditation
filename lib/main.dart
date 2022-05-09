@@ -6,13 +6,12 @@ import 'package:vibration/vibration.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'VibCol.dart';
-// import 'other_widget.dart';
 import 'breath_animation.dart';
 import 'dart:ui';
 
 void main() {
   runApp(GetMaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFF6F5FF)),
+      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFF343148)),
       home: const Home()));
 }
 
@@ -39,6 +38,7 @@ class WindowsController extends GetxController {
 class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   RxBool _visible = true.obs;
   RxBool _isRunning = false.obs;
+  RxBool _black = true.obs;
   var timeSec = 0;
   var timeMin = 0;
   var timeMinRx = 0.obs;
