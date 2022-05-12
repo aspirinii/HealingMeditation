@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
@@ -8,6 +7,7 @@ import 'dart:async';
 import 'VibCol.dart';
 import 'breath_animation.dart';
 import 'dart:ui';
+import 'star_background.dart';
 
 void main() {
   runApp(GetMaterialApp(
@@ -240,6 +240,7 @@ class Home extends StatelessWidget {
       child: Stack(
         children: [
           const StaggerDemo(),
+          const Sparkling(),
           Obx(() => AnimatedOpacity(
               duration: const Duration(milliseconds: 500),
               opacity: c._visible.value ? 1 : 0,
