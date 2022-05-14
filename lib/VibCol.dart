@@ -57,13 +57,24 @@ List<int> part1Inten(int sec){
 
 
 List<int> part2Pattern(int sec){
-    List<int> vPattern1 =  [for(var i=0; i<sec*2; i+=1) if (i%2 == 0) 100 else 900];
+    List<int> vPattern1 =  [];
+    for(var i=0; i<sec*3; i+=1) {
+      if (i%3 == 0) {vPattern1.add(300);}
+      else if (i%3==1) {vPattern1.add(100);}
+      else if (i%3==2) {vPattern1.add(600);}
+    }
+      
     return vPattern1;
 }
 
 List<int> part2Inten(int sec){
-    List<int> vInten1 =  [for(var i=0; i<sec*2; i+=1) if (i%2 == 0) 100 else 0];
-    return vInten1;
+    List<int> vInten =  [];
+    for(var i=0; i<sec*3; i+=1) {
+      if (i%3 == 0) {vInten.add(0);}
+      else if (i%3==1) {vInten.add(100);}
+      else if (i%3==2) {vInten.add(0);}
+    }
+    return vInten;
 }
 
 List<int> part3Pattern(int sec){
@@ -78,7 +89,7 @@ List<int> part3Inten(int sec){
   var maxInten = 100;
   var step = maxInten/(sec*index); 
   List<int> vIntensities = [for(double i=0; i<sec*index; i++) (i*step).toInt()];
-  List<int> vIntensities3 = new List.from(vIntensities.reversed);
+  List<int> vIntensities3 =  List.from(vIntensities.reversed);
   return vIntensities3;
 }
 

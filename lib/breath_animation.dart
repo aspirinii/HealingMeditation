@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
 
+
 class StaggerAnimation extends StatelessWidget {
   StaggerAnimation(safeMinSize,
       {Key? key, required this.controller, double test = 0})
@@ -29,7 +30,7 @@ class StaggerAnimation extends StatelessWidget {
         //   ),
         // ),
         width = Tween<double>(
-          begin: safeMinSize / 5,
+          begin: safeMinSize / 8,
           end: safeMinSize / 4,
         ).animate(
           CurvedAnimation(
@@ -42,7 +43,7 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         height =
-            Tween<double>(begin: safeMinSize / 5, end: safeMinSize / 4).animate(
+            Tween<double>(begin: safeMinSize / 8, end: safeMinSize / 4).animate(
           CurvedAnimation(
             parent: controller,
             curve: const Interval(
@@ -66,8 +67,8 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         color1 = ColorTween(
-          begin: const Color(0x55EDC2D8),
-          end: const Color(0xFFEDC2D8),
+          begin: const Color(0xFF343148),
+          end: const Color(0xFFD7C49E),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -79,8 +80,8 @@ class StaggerAnimation extends StatelessWidget {
           ),
         ),
         color2 = ColorTween(
-          begin: const Color(0x55BABAD3),
-          end: const Color(0xFFBABAD3),
+          begin: const Color(0xFF343148),
+          end: Color.fromARGB(255, 255, 233, 188),
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -103,7 +104,7 @@ class StaggerAnimation extends StatelessWidget {
   // This function is called each time the controller "ticks" a new frame.
   // When it runs, all of the animation's values will have been
   // updated to reflect the controller's current value.
-  int safeMinSize = 200;
+  double safeMinSize = 200;
   Widget _buildAnimation(BuildContext context, Widget? child) {
     return Container(
       padding: const EdgeInsets.all(0),
@@ -111,44 +112,48 @@ class StaggerAnimation extends StatelessWidget {
       child: Opacity(
         opacity: 1,
         child: Container(
-          width: width.value,
-          height: height.value,
-          // width: safeMinSize / 5,
-          // height: safeMinSize / 5,
+          width: safeMinSize / 5,
+          height: safeMinSize / 5,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: [
-                // color1.value ?? Colors.blue,
-                // color2.value ?? Colors.red,
-                // const Color(0xFF343148),
-                // ignore: prefer_const_constructors
-                const Color(0xFFF6F5FF),
-                const Color(0xFFD7C49E)
+                color1.value ?? const Color(0xFF343148),
+                color2.value ?? const Color(0xFF343148),
+
+                // const Color(0xFFF6F5FF),
+                // const Color(0xFFD7C49E)
               ],
             ),
             border: Border.all(
-              color: const Color(0xFFF6F5FF),
+              color: color1.value ?? const Color(0xFF343148),
               width: 0.2,
             ),
-            // borderRadius: BorderRadius.circular(safeMinSize * 0.3),
-            borderRadius: borderRadius.value,
+            borderRadius: BorderRadius.circular(safeMinSize * 0.3),
+            // borderRadius: borderRadius.value,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFD7C49E).withOpacity(1),
+                color: const Color(0xFFD7C49E).withOpacity(0.6),
                 spreadRadius: width.value / 3,
                 blurRadius: width.value / 7,
                 offset: const Offset(0, 0),
                 // changes position of shadow
               ),
-              BoxShadow(
-                color: const Color(0xFFD7C49E).withOpacity(1),
-                spreadRadius: width.value / 10,
-                blurRadius: width.value / 7,
-                offset: const Offset(0, 0),
-                // changes position of shadow
-              ),
+              // BoxShadow(
+              //   color: const Color(0xFFD7C49E).withOpacity(0.5),
+              //   spreadRadius: width.value / 10,
+              //   blurRadius: width.value /5,
+              //   offset: const Offset(20, 100),
+              //   // changes position of shadow
+              // ),
+              // BoxShadow(
+              //   color: const Color(0xFFD7C49E).withOpacity(0.5),
+              //   spreadRadius: width.value / 20,
+              //   blurRadius: width.value /4,
+              //   offset: const Offset(100, 200),
+              //   // changes position of shadow
+              // ),
             ],
           ),
         ),

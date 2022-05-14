@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
@@ -8,6 +8,7 @@ import 'dart:async';
 import 'VibCol.dart';
 import 'breath_animation.dart';
 import 'dart:ui';
+import 'moon_animation.dart';
 
 void main() {
   runApp(GetMaterialApp(
@@ -55,12 +56,35 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   var _cycle = 3.obs;
 
   late AnimationController _controller;
+  var shimmerEn = false.obs;
+  var yellowShimmer = false.obs;
+
+  int _counter = 0;
+  //시작할 때 counter 값을 불러옵니다.
+  _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cycle.value = (prefs.getInt('cycle') ?? 3);
+    inhale.value = (prefs.getInt('inhale') ?? 3);
+    full.value = (prefs.getInt('full') ?? 3);
+    exhale.value = (prefs.getInt('exhale') ?? 3);
+    empty.value = (prefs.getInt('empty') ?? 3);
+  }
+
+  //클릭하면 counter를 증가시킵니다.
+  _savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('cycle', cycle.value);
+    prefs.setInt('inhale', inhale.value);
+    prefs.setInt('full', full.value);
+    prefs.setInt('exhale', exhale.value);
+    prefs.setInt('empty', empty.value);
+  }
 
   @override
   void onInit() {
     _controller = AnimationController(vsync: this);
     timeSum();
-
+    _loadPreferences();
     super.onInit();
   }
 
@@ -74,16 +98,20 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   // int exhaleforAni = exhale.value;
 
   void _defineControllerDuration1() {
-    int inhalefullforAni = (inhale.value + full.value) * 1000;
+    int inhalefullforAni = (inhale.value) * 1000;
+// int inhalefullforAni = (inhale.value + full.value) * 1000;
     _controller.duration = Duration(milliseconds: inhalefullforAni);
   }
 
   void _defineControllerDuration2() {
-    int exhaleforAni = (exhale.value + empty.value) * 1000;
+    // int exhaleforAni = (exhale.value + empty.value) * 1000;
+    int exhaleforAni = (exhale.value) * 1000;
     _controller.duration = Duration(milliseconds: exhaleforAni);
   }
 
   Future<void> _playAnimation() async {
+    int fullforAni = full.value * 1000;
+    int emptyforAni = empty.value * 1000;
     for (int i = 0; i < cycle.value; i++) {
       try {
         if (!_isRunning.value) {
@@ -91,8 +119,18 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
         }
         _defineControllerDuration1();
         await _controller.forward().orCancel;
+        shimmerEn.value = true;
+        yellowShimmer.value = false;
+        await Future.delayed(Duration(milliseconds: fullforAni));
+        shimmerEn.value = false;
+        
         _defineControllerDuration2();
         await _controller.reverse().orCancel;
+        
+        shimmerEn.value = true;
+        yellowShimmer.value = true;
+        await Future.delayed(Duration(milliseconds: emptyforAni));
+        shimmerEn.value = false;
       } on TickerCanceled {
         // the animation got canceled, probably because we were disposed
       }
@@ -161,6 +199,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     timeSecRx.value = timeSec % 60;
     _cycle.value =
         timeSec ~/ (inhale.value + full.value + exhale.value + empty.value);
+    _savePreferences();
   }
 
   timeSumInRunning() {
@@ -189,7 +228,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     }
   }
 
-  void stopBtn() {
+  void stopBtn() async{
     if (!_visible.value) {
       return;
     }
@@ -197,11 +236,21 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     _visible.value = true;
     stopTimer();
     vibStop();
-    stopAnimation();
+    await stopAnimation();
+    _controller.reverse(from: 0.3);
   }
 
   Future<void> stopAnimation() async {
-    for (int i = 0; i < cycle.value; i++) {
+    // for (int i = 0; i < cycle.value; i++) {
+    //   try {
+    //     _controller.isAnimating
+    //         ? _controller.stop()
+    //         : _controller.reverse(from: 0.3);
+    //   } on TickerCanceled {
+    //     // the animation got canceled, probably because we were disposed
+    //   }
+    // }
+    do {
       try {
         _controller.isAnimating
             ? _controller.stop()
@@ -209,7 +258,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
       } on TickerCanceled {
         // the animation got canceled, probably because we were disposed
       }
-    }
+    }while( _controller.isAnimating);
     // _controller.reverse(from : 0.1);
   }
 }
@@ -240,6 +289,7 @@ class Home extends StatelessWidget {
       child: Stack(
         children: [
           const StaggerDemo(),
+          Obx(() => ShimmerPage(c.shimmerEn.value, c.yellowShimmer.value)),
           Obx(() => AnimatedOpacity(
               duration: const Duration(milliseconds: 500),
               opacity: c._visible.value ? 1 : 0,
@@ -293,7 +343,10 @@ class MenuWidget extends StatelessWidget {
     // Access the updated count variable
     return Center(
       child: Container(
-          color: Colors.grey.withOpacity(0.2),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.grey.withOpacity(0.2),
+          ),
           child: SizedBox(
             //responsive.. 작은폰엔 어떻게 적용하는가
             height: 500,
