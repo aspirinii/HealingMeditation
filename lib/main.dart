@@ -16,7 +16,6 @@ void main() {
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
-~~~~~
   @override
   Widget build(context) {
     final Controller c = Get.put(Controller());
