@@ -130,7 +130,7 @@ class StaggerAnimation extends StatelessWidget {
               color: color1.value ?? const Color(0xFF343148),
               width: 0.2,
             ),
-            borderRadius: BorderRadius.circular(safeMinSize * 0.3),
+            borderRadius: BorderRadius.circular(safeMinSize),
             // borderRadius: borderRadius.value,
             boxShadow: [
               BoxShadow(

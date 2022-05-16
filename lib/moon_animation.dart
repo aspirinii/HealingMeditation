@@ -32,7 +32,7 @@ class ShimmerPage extends StatelessWidget {
         interval: Duration(seconds: 0), // This is the default value 
         color: yellowValue ? const Color(0xFFD7C49E) : const Color(0xFF343148),
          // This is the default value
-        colorOpacity: 1,
+        colorOpacity: 0.5,
         // This is the default value
         enabled: enabledValue,
         // This is the default value
