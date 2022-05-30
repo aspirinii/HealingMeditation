@@ -9,6 +9,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
   MenuWidget({Key? key}) : super(key: key);
   final Controller c = Get.find();
   final WindowsController c2 = Get.put(WindowsController());
+  final buttonColor = Colors.black;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -35,17 +36,22 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Spacer(),
                     const Icon(CupertinoIcons.clock),
-                    Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                    Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")), 
+                    Spacer(),
                     const Icon(CupertinoIcons.arrow_2_circlepath_circle),
                     Obx(() => Text("   ${c.value_cycle} ")),
+                    Spacer(),
                   ],
                 ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     const Icon(CupertinoIcons.arrow_2_circlepath_circle),
+                //     Obx(() => Text("   ${c.value_cycle} ")),
+                //   ],
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -54,9 +60,10 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         c.decrement(c.cycle);
                       },
                       icon: const Icon(CupertinoIcons.chevron_left),
-                      splashColor: Colors.red,
-                      splashRadius: 10,
-                      hoverColor: Colors.blue,
+                      color: buttonColor,
+                      // splashColor: Colors.red,
+                      // splashRadius: 10,
+                      // hoverColor: Colors.blue,
                     ),
                     const Icon(CupertinoIcons.arrow_clockwise),
                     Obx(() => Text("${c.cycle}")),
@@ -65,9 +72,10 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         c.increment(c.cycle);
                       },
                       icon: const Icon(CupertinoIcons.chevron_right),
-                      splashColor: Colors.red,
-                      splashRadius: 10,
-                      hoverColor: Colors.blue,
+                      color: buttonColor,
+                      // splashColor: Colors.red,
+                      // splashRadius: 10,
+                      // hoverColor: Colors.blue,
                     ),
                   ],
                 ),
@@ -84,6 +92,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                             c.increment(c.inhale);
                           },
                           icon: const Icon(CupertinoIcons.chevron_up),
+                          color: buttonColor
                         ),
                         Obx(() => Text("${c.inhale}")),
                         IconButton(
@@ -91,6 +100,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                             c.decrement(c.inhale);
                           },
                           icon: const Icon(CupertinoIcons.chevron_down),
+                          color: buttonColor
                         ),
                         const Text("Inhale"),
                       ],
@@ -98,12 +108,13 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(CupertinoIcons.heart_fill),
+                        const Icon(CupertinoIcons.circle_fill),
                         IconButton(
                           onPressed: () {
                             c.increment(c.full);
                           },
                           icon: const Icon(CupertinoIcons.chevron_up),
+                          color: buttonColor
                         ),
                         Obx(() => Text("${c.full}")),
                         IconButton(
@@ -111,8 +122,9 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                             c.decrement(c.full);
                           },
                           icon: const Icon(CupertinoIcons.chevron_down),
+                          color: buttonColor
                         ),
-                        const Text("full"),
+                        const Text("Full"),
                       ],
                     ),
                     Column(
@@ -125,6 +137,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                             c.increment(c.exhale);
                           },
                           icon: const Icon(CupertinoIcons.chevron_up),
+                          color: buttonColor
                         ),
                         Obx(() => Text("${c.exhale}")),
                         IconButton(
@@ -132,6 +145,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                             c.decrement(c.exhale);
                           },
                           icon: const Icon(CupertinoIcons.chevron_down),
+                          color: buttonColor
                         ),
                         const Text("Exhale"),
                       ],
@@ -139,23 +153,23 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(CupertinoIcons.heart),
+                        const Icon(CupertinoIcons.circle),
                         IconButton(
                           onPressed: () {
                             c.increment(c.empty);
                           },
                           icon: const Icon(CupertinoIcons.chevron_up),
+                          color: buttonColor
                         ),
                         Obx(() => Text("${c.empty}")),
                         IconButton(
                           onPressed: () {
                             c.decrement(c.empty);
                           },
-                          icon: const Icon(
-                            CupertinoIcons.chevron_down,
-                          ),
+                          icon: const Icon(CupertinoIcons.chevron_down),
+                          color: buttonColor,
                         ),
-                        const Text("empty"),
+                        const Text("Empty"),
                       ],
                     ),
                   ],
@@ -168,12 +182,12 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         c.startBtn();
                       },
                       child: const Icon(Icons.play_arrow_sharp,
-                          size: 30, color: Colors.white),
+                          size: 30, color: Colors.black),
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(15),
                         primary: Colors.transparent, // <-- Button color
-                        onPrimary: Colors.red, // <-- Splash color
+                        onPrimary: Colors.white, // <-- Splash color
                       ),
                     ),
                     ElevatedButton(
@@ -181,12 +195,12 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         c.stopBtn();
                       },
                       child:
-                          const Icon(Icons.stop, size: 30, color: Colors.white),
+                          const Icon(Icons.stop, size: 30,color:Colors.black),
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(15),
                         primary: Colors.transparent, // <-- Button color
-                        onPrimary: Colors.red, // <-- Splash color
+                        onPrimary: Colors.white, // <-- Splash color
                       ),
                     )
                   ],
