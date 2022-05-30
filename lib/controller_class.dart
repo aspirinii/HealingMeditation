@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'dart:async';
 import 'VibCol.dart';
 import 'dart:ui';
+import 'dart:io' show Platform;
 
 
 class WindowsController extends GetxController {
@@ -214,7 +215,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     int value_exhale = exhale.value;
     int value_full = full.value;
     int value_empty = empty.value;
-    HapticVib(value_cycle1, value_inhale, value_full, value_exhale, value_empty);
+    if (Platform.isAndroid || Platform.isIOS){
+      HapticVib(value_cycle1, value_inhale, value_full, value_exhale, value_empty);}
+    else{
+      print("it is not mobile");
+    }
   }
 
   increment(a) {
@@ -282,6 +287,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     value_isRunning.value = false;
     value_visible.value = true;
     stopTimer();
+    if (Platform.isAndroid || Platform.isIOS){
+        vibStop();}
+    else{
+      print("it is not mobile");
+    } 
     vibStop();
     await stopAnimation();
     value_controller.reverse(from: 0.3);
