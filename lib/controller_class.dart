@@ -87,6 +87,7 @@ class LifeController  extends FullLifeCycleController with FullLifeCycleMixin{
 class Controller extends GetxController with GetSingleTickerProviderStateMixin {
 
   RxBool value_visible = true.obs;
+  RxBool complete_star_visible = false.obs;
   RxBool value_isRunning = false.obs;
   RxBool value_black = true.obs;
   var value_timeSum = 10.obs;
@@ -192,10 +193,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
         cycle.value * (inhale.value + full.value + exhale.value + empty.value);
     const oneSec = Duration(seconds: 1);
     value_timer = Timer.periodic(oneSec, (value_timer) {
+      print(value_timeSum.value);
       if (value_timeSum.value == 0) {
-        value_visible.value = true;
         value_isRunning.value = false;
         stopTimer();
+        Congratulations();
       } else {
         value_timeSum.value--;
         timeSumInRunning();
@@ -271,6 +273,27 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     timeMinRx.value = timeMin;
     timeSecRx.value = timeSec % 60;
   }
+  
+  Congratulations(){
+    value_isRunning.value = true;
+    complete_star_visible.value = true;
+    const oneSec = Duration(seconds: 1);
+    var staytime = 10;
+    Timer.periodic(oneSec, (time) {
+      if (staytime == 0) {
+        value_visible.value = true;
+        value_isRunning.value = false;
+        time.cancel();
+      } else if(staytime == 1 ){
+        complete_star_visible.value  = false;
+        staytime--;
+        
+      }else{
+        staytime--;
+
+      }
+    });
+  }
 
   vibStop() {
     Vibration.cancel();
@@ -284,6 +307,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
       timerWork(); // vibration
       startTimer();
       value_visible.value = false;
+      complete_star_visible.value  = false;
     
   }
 

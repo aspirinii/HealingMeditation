@@ -4,7 +4,7 @@ import 'breath_animation.dart';
 import 'moon_animation.dart';
 import 'controller_class.dart';
 import 'menu.dart';
-// import 'package:lottie/lottie.dart';
+import 'package:lottie/lottie.dart';
 
 
 void main() {
@@ -36,13 +36,23 @@ class Home extends StatelessWidget {
       child: Stack(
         children: [
           const StaggerDemo(),
+          Obx(() => AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: c.complete_star_visible.value ? 1 : 0,
+// opacity: 1,
+            child: Align(alignment: Alignment.center,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+              child: Lottie.asset('assets/LottieStars.json')))
+            )
+          ),
           Obx(() => ShimmerPage(c.shimmerEn.value, c.yellowShimmer.value)),
           Obx(() => AnimatedOpacity(
               duration: const Duration(milliseconds: 500),
               opacity: c.value_visible.value ? 1 : 0,
               child: MenuWidget()
               )
-              ),
+          ),
           // Lottie.asset('assets/LottieSparkling.json'),
         ],
       ),

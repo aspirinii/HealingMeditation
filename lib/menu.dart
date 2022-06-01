@@ -196,6 +196,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        print(c.value_isRunning.value);
                         if (c.value_isRunning.value || !c.value_visible.value) {
                           print("menu is unvisible now! ");
                         }
