@@ -196,7 +196,12 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        c.startBtn();
+                        if (c.value_isRunning.value || !c.value_visible.value) {
+                          print("menu is unvisible now! ");
+                        }
+                        else{
+                          c.startBtn();
+                        }
                       },
                       child: const Icon(Icons.play_arrow_sharp,
                           size: 30, color: Colors.black),
@@ -209,7 +214,12 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        c.stopBtn();
+                        if (!c.value_visible.value) {
+                          print("menu is unvisible now! ");
+                        }
+                        else{
+                          c.stopBtn();
+                        }
                       },
                       child:
                           const Icon(Icons.stop, size: 30,color:Colors.black),

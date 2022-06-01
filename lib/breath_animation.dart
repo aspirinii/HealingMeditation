@@ -17,21 +17,21 @@ class StaggerAnimation extends StatelessWidget {
         // the first 10% of the controller's duration.
 
         // opacity = Tween<double>(
-        //   begin: 1,
+        //   begin: 0,
         //   end: 1.0,
         // ).animate(
         //   CurvedAnimation(
         //     parent: controller,
         //     curve: const Interval(
-        //       0.0,
-        //       0.100,
-        //       curve: Curves.easeInCirc,
+        //       0.7,
+        //       1,
+        //       curve: Curves.ease,
         //     ),
         //   ),
         // ),
         width = Tween<double>(
           begin: safeMinSize / 8,
-          end: safeMinSize / 4,
+          end: safeMinSize / 3,
         ).animate(
           CurvedAnimation(
             parent: controller,
@@ -53,19 +53,19 @@ class StaggerAnimation extends StatelessWidget {
             ),
           ),
         ),
-        borderRadius = BorderRadiusTween(
-          begin: BorderRadius.circular(safeMinSize * 0.3),
-          end: BorderRadius.circular(safeMinSize * 1.5),
-        ).animate(
-          CurvedAnimation(
-            parent: controller,
-            curve: const Interval(
-              0,
-              1,
-              curve: Curves.ease,
-            ),
-          ),
-        ),
+        // borderRadius = BorderRadiusTween(
+        //   begin: BorderRadius.circular(safeMinSize * 0.3),
+        //   end: BorderRadius.circular(safeMinSize * 1.5),
+        // ).animate(
+        //   CurvedAnimation(
+        //     parent: controller,
+        //     curve: const Interval(
+        //       0,
+        //       1,
+        //       curve: Curves.ease,
+        //     ),
+        //   ),
+        // ),
         color1 = ColorTween(
           begin: const Color(0xFF343148),
           end: const Color(0xFFD7C49E),
@@ -97,7 +97,7 @@ class StaggerAnimation extends StatelessWidget {
   // final Animation<double> opacity;
   final Animation<double> width;
   final Animation<double> height;
-  final Animation<BorderRadius?> borderRadius;
+  // final Animation<BorderRadius?> borderRadius;
   final Animation<Color?> color1;
   final Animation<Color?> color2;
 
@@ -130,29 +130,29 @@ class StaggerAnimation extends StatelessWidget {
               color: color1.value ?? const Color(0xFF343148),
               width: 0.2,
             ),
-            borderRadius: BorderRadius.circular(safeMinSize),
+            // borderRadius: BorderRadius.circular(safeMinSize),
             // borderRadius: borderRadius.value,
+            shape: BoxShape.circle,
             boxShadow: [
+              // BoxShadow(
+              //   color: const Color(0xFFD7C49E).withOpacity(opacity.value),
+              //   spreadRadius: width.value / 3,
+              //   blurRadius: width.value / 7,
+              //   blurStyle: BlurStyle.solid,
+              //   // changes position of shadow
+              // ),
               BoxShadow(
                 color: const Color(0xFFD7C49E).withOpacity(0.6),
                 spreadRadius: width.value / 3,
                 blurRadius: width.value / 7,
-                offset: const Offset(0, 0),
+                blurStyle: BlurStyle.normal,
                 // changes position of shadow
               ),
               // BoxShadow(
-              //   color: const Color(0xFFD7C49E).withOpacity(0.5),
-              //   spreadRadius: width.value / 10,
-              //   blurRadius: width.value /5,
-              //   offset: const Offset(20, 100),
-              //   // changes position of shadow
-              // ),
-              // BoxShadow(
-              //   color: const Color(0xFFD7C49E).withOpacity(0.5),
-              //   spreadRadius: width.value / 20,
-              //   blurRadius: width.value /4,
-              //   offset: const Offset(100, 200),
-              //   // changes position of shadow
+              //   color: const Color(0xFFD7C49E).withOpacity(opacity.value),
+              //   spreadRadius: width.value / 3,
+              //   blurRadius: width.value / 7,
+              //   blurStyle: BlurStyle.outer,
               // ),
             ],
           ),

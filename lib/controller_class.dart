@@ -8,6 +8,8 @@ import 'dart:async';
 import 'VibCol.dart';
 import 'dart:ui';
 import 'dart:io' show Platform;
+import 'package:wakelock/wakelock.dart';
+
 
 
 class WindowsController extends GetxController {
@@ -110,11 +112,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   //시작할 때 counter 값을 불러옵니다.
   value_loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    cycle.value = (prefs.getInt('cycle') ?? 3);
-    inhale.value = (prefs.getInt('inhale') ?? 3);
-    full.value = (prefs.getInt('full') ?? 3);
-    exhale.value = (prefs.getInt('exhale') ?? 3);
-    empty.value = (prefs.getInt('empty') ?? 3);
+    cycle.value = (prefs.getInt('cycle') ?? 5);
+    inhale.value = (prefs.getInt('inhale') ?? 5);
+    full.value = (prefs.getInt('full') ?? 1);
+    exhale.value = (prefs.getInt('exhale') ?? 5);
+    empty.value = (prefs.getInt('empty') ?? 1);
   }
 
   //클릭하면 counter를 증가시킵니다.
@@ -131,6 +133,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     value_controller = AnimationController(vsync: this);
     timeSum();
     value_loadPreferences();
+    Wakelock.enable();
     super.onInit();
   }
 
@@ -201,7 +204,12 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   }
 
   void stopTimer() {
-    value_timer.cancel();
+    if (value_timer != null && value_timer.isActive){
+      value_timer.cancel();
+    print("value_tiemr is active ${value_timer.isActive}");
+    }else{
+      print("value timer is not active ");
+    }
     timeSum();
     return;
   }
@@ -269,32 +277,37 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   }
 
   void startBtn() {
-    if (value_isRunning.value || !value_visible.value) {
-      return;
-    } else {
+    // if (value_isRunning.value || !value_visible.value) {
+    //   return;}
       value_isRunning.value = true;
       value_playAnimation();
       timerWork(); // vibration
       startTimer();
       value_visible.value = false;
-    }
+    
   }
 
   void stopBtn() async{
-    if (!value_visible.value) {
-      return;
-    }
+    print("stopBtn start ---------------------------------");
+    // if (!value_visible.value) {
+    //   return;
+    // }
     value_isRunning.value = false;
     value_visible.value = true;
     stopTimer();
+
     if (Platform.isAndroid || Platform.isIOS){
-        vibStop();}
+        vibStop();
+    }
     else{
       print("it is not mobile");
     } 
-    vibStop();
+
+    // vibStop();
     await stopAnimation();
     value_controller.reverse(from: 0.3);
+    print("stopBtn End ---------------------------------");
+
   }
 
   Future<void> stopAnimation() async {
