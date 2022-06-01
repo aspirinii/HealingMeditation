@@ -2,7 +2,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'controller_class.dart';
+import 'package:decorated_icon/decorated_icon.dart';
 
+
+
+class DecoButton extends StatelessWidget {
+  DecoButton(dicon) :  diconThis =dicon;
+  IconData diconThis;
+
+  final buttonColor = Colors.black;
+  final buttonShadow = [
+                          const BoxShadow(
+                            color: Colors.white,
+                            blurRadius: 1,
+                          ),
+                        ];
+
+  get icon => Icons.abc;
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedIcon(
+                        diconThis,
+                        color: buttonColor,
+                        shadows: buttonShadow,
+                      );
+  }
+}
 
 class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
   // You can ask Get to find a Controller that is being used by another page and redirect you to it.
@@ -10,6 +35,13 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
   final Controller c = Get.find();
   final WindowsController c2 = Get.put(WindowsController());
   final buttonColor = Colors.black;
+  final buttonShadow = [
+                          const BoxShadow(
+                            color: Colors.white,
+                            blurRadius: 3,
+                          ),
+                        ];
+
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -24,8 +56,8 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.grey.withOpacity(0.2),
-          ),
+            color: Colors.grey.withOpacity(0.3),
+          ),///////
           child: SizedBox(
             //responsive.. 작은폰엔 어떻게 적용하는가
             height: 500,
@@ -36,48 +68,41 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Spacer(),
+                    const Spacer(),
                     const Icon(CupertinoIcons.clock),
                     Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")), 
-                    Spacer(),
+                    const Spacer(),
                     const Icon(CupertinoIcons.arrow_2_circlepath_circle),
                     Obx(() => Text("   ${c.value_cycle} ")),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     const Icon(CupertinoIcons.arrow_2_circlepath_circle),
-                //     Obx(() => Text("   ${c.value_cycle} ")),
-                //   ],
-                // ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        c.decrement(c.cycle);
-                      },
-                      icon: const Icon(CupertinoIcons.chevron_left),
-                      color: buttonColor,
-                      // splashColor: Colors.red,
-                      // splashRadius: 10,
-                      // hoverColor: Colors.blue,
-                    ),
-                    const Icon(CupertinoIcons.arrow_clockwise),
-                    Obx(() => Text("${c.cycle}")),
-                    IconButton(
-                      onPressed: () {
-                        c.increment(c.cycle);
-                      },
-                      icon: const Icon(CupertinoIcons.chevron_right),
-                      color: buttonColor,
-                      // splashColor: Colors.red,
-                      // splashRadius: 10,
-                      // hoverColor: Colors.blue,
-                    ),
-                  ],
+                Container(
+                  // margin:  EdgeInsets.all(10),
+                  // padding: EdgeInsets.all(0),
+                  // decoration: BoxDecoration(
+                  //   borderRadius: BorderRadius.circular(20),
+                  //   color: Colors.grey.withOpacity(0.2),
+                  // ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          c.decrement(c.cycle);
+                        },
+                        icon: DecoButton(CupertinoIcons.chevron_left)
+                        ),
+                      const Icon(CupertinoIcons.arrow_clockwise),
+                      Obx(() => Text("${c.cycle}")),
+                      IconButton(
+                        onPressed: () {
+                          c.increment(c.cycle);
+                        },
+                        icon: DecoButton(CupertinoIcons.chevron_right)
+                        ),
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -86,21 +111,19 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         const Icon(
-                            CupertinoIcons.arrow_down_right_arrow_up_left),
+                              CupertinoIcons.arrow_down_right_arrow_up_left),
                         IconButton(
-                          onPressed: () {
-                            c.increment(c.inhale);
-                          },
-                          icon: const Icon(CupertinoIcons.chevron_up),
-                          color: buttonColor
-                        ),
+                                onPressed: () {
+                                  c.increment(c.inhale);
+                                },
+                                icon: DecoButton(CupertinoIcons.chevron_up),                       
+                                ),
                         Obx(() => Text("${c.inhale}")),
                         IconButton(
                           onPressed: () {
                             c.decrement(c.inhale);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_down),
-                          color: buttonColor
+                                icon: DecoButton(CupertinoIcons.chevron_down),                       
                         ),
                         const Text("Inhale"),
                       ],
@@ -113,16 +136,14 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                           onPressed: () {
                             c.increment(c.full);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_up),
-                          color: buttonColor
+                          icon: DecoButton(CupertinoIcons.chevron_up),     
                         ),
                         Obx(() => Text("${c.full}")),
                         IconButton(
                           onPressed: () {
                             c.decrement(c.full);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_down),
-                          color: buttonColor
+                          icon: DecoButton(CupertinoIcons.chevron_down),  
                         ),
                         const Text("Full"),
                       ],
@@ -136,16 +157,14 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                           onPressed: () {
                             c.increment(c.exhale);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_up),
-                          color: buttonColor
+                          icon: DecoButton(CupertinoIcons.chevron_up),                       
                         ),
                         Obx(() => Text("${c.exhale}")),
                         IconButton(
                           onPressed: () {
                             c.decrement(c.exhale);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_down),
-                          color: buttonColor
+                          icon: DecoButton(CupertinoIcons.chevron_down),                       
                         ),
                         const Text("Exhale"),
                       ],
@@ -158,16 +177,14 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                           onPressed: () {
                             c.increment(c.empty);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_up),
-                          color: buttonColor
+                          icon: DecoButton(CupertinoIcons.chevron_up),                       
                         ),
                         Obx(() => Text("${c.empty}")),
                         IconButton(
                           onPressed: () {
                             c.decrement(c.empty);
                           },
-                          icon: const Icon(CupertinoIcons.chevron_down),
-                          color: buttonColor,
+                          icon: DecoButton(CupertinoIcons.chevron_down),                     
                         ),
                         const Text("Empty"),
                       ],

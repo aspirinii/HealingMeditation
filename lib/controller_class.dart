@@ -95,11 +95,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   var timeMinRx = 0.obs;
   var timeSecRx = 0.obs;
   var count = 0.obs;
-  var cycle = 2.obs;
-  var inhale = 3.obs;
-  var full = 0.obs;
-  var exhale = 3.obs;
-  var empty = 0.obs;
+  var cycle = 5.obs;
+  var inhale = 5.obs;
+  var full = 1.obs;
+  var exhale = 5.obs;
+  var empty = 1.obs;
   late Timer value_timer;
 
   late AnimationController value_controller;

@@ -4,12 +4,16 @@ import 'breath_animation.dart';
 import 'moon_animation.dart';
 import 'controller_class.dart';
 import 'menu.dart';
+// import 'package:lottie/lottie.dart';
+
 
 void main() {
   // Get.put(LifeController());
   runApp(GetMaterialApp(
     initialBinding: HomeBinding(),
-    theme: ThemeData(scaffoldBackgroundColor: const Color(0xFF343148)),
+    theme: ThemeData(
+      scaffoldBackgroundColor: const Color(0xFF343148)
+      ),
     home: const Home()));
 }
 
@@ -36,7 +40,10 @@ class Home extends StatelessWidget {
           Obx(() => AnimatedOpacity(
               duration: const Duration(milliseconds: 500),
               opacity: c.value_visible.value ? 1 : 0,
-              child: MenuWidget()))
+              child: MenuWidget()
+              )
+              ),
+          // Lottie.asset('assets/LottieSparkling.json'),
         ],
       ),
     ));
