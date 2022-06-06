@@ -12,7 +12,7 @@ void main() {
   runApp(GetMaterialApp(
     initialBinding: HomeBinding(),
     theme: ThemeData(
-      scaffoldBackgroundColor: const Color(0xFF343148)
+      scaffoldBackgroundColor: const Color(0xFF343148),
       ),
     home: const Home()));
 }

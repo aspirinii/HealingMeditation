@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart'; 
 // 사각형을 원형으로 만들기 위해 라이브러리 임시로 손댐 , 수정하면 잘 안될수있으니 잘확인 
+//custom shimmer aniomation
+    // var path = Path();
+
+    // // path.lineTo(0, size.height);
+    // // path.lineTo(size.width, size.height);
+    // // path.lineTo(size.width, 0);
+    // path.addOval(Rect.fromCircle(
+    //   center: Offset(20, 20),// <-- width,height/2  
+    //   radius: 20.0,
+    // ));
+
+    
 //    path.addOval(Rect.fromCircle(
 //      center: Offset(20, 20), <-- width,height/2  
 //      radius: 20.0,
@@ -22,8 +34,10 @@ class ShimmerPage extends StatelessWidget {
           width: safeMinSize / 5,
           height: safeMinSize / 5,
           decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(safeMinSize * 0.3),
-          color: Colors.black.withOpacity(0),
+            // borderRadius: BorderRadius.circular(safeMinSize * 0.3),
+            color: Colors.black.withOpacity(0),
+            shape: BoxShape.circle,
+          
           )
         ),
         // This is the default value

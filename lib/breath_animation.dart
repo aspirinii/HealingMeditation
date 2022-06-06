@@ -31,7 +31,7 @@ class StaggerAnimation extends StatelessWidget {
         // ),
         width = Tween<double>(
           begin: safeMinSize / 8,
-          end: safeMinSize / 3,
+          end: safeMinSize/2 ,
         ).animate(
           CurvedAnimation(
             parent: controller,

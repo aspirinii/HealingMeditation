@@ -2,7 +2,7 @@
     package="com.example.healing_meditation">
 <uses-permission android:name="android.permission.WAKE_LOCK" />
    <application
-        android:label="healing_meditation"
+        android:label="Haptic Meditation"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

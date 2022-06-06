@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'controller_class.dart';
 import 'package:decorated_icon/decorated_icon.dart';
+import 'package:flutter/material.dart';
+
 
 
 
@@ -10,21 +11,44 @@ class DecoButton extends StatelessWidget {
   DecoButton(dicon) :  diconThis =dicon;
   IconData diconThis;
 
-  final buttonColor = Colors.black;
+  final buttonColor = Color(0xFF232131);
   final buttonShadow = [
-                          const BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 1,
-                          ),
+                        //   const BoxShadow(
+                        // color:  Colors.black54,
+                        // offset: Offset(1.3, 1.3),
+                        // blurRadius: 5,
+                        // spreadRadius: 20,
+                        //   ),
+                        // const BoxShadow(
+                        // color: const Color(0x33D7C49E),  
+                        // offset: Offset(-0.5, -0.5),
+                        // blurRadius: 5,
+                        // spreadRadius: 20,
+                        //   ),
                         ];
-
   get icon => Icons.abc;
   @override
   Widget build(BuildContext context) {
     return DecoratedIcon(
                         diconThis,
                         color: buttonColor,
-                        shadows: buttonShadow,
+                        // shadows: buttonShadow,
+                      );
+  }
+}
+
+class StaticIcon extends StatelessWidget {
+  StaticIcon(sicon) :  sThis =sicon;
+  IconData sThis;
+
+  // final buttonColor = Color(0xFF232131);
+  final iconColor = Colors.black87;
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+                        sThis,
+                        color: iconColor,
+                        // shadows: buttonShadow,
                       );
   }
 }
@@ -34,13 +58,6 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
   MenuWidget({Key? key}) : super(key: key);
   final Controller c = Get.find();
   final WindowsController c2 = Get.put(WindowsController());
-  final buttonColor = Colors.black;
-  final buttonShadow = [
-                          const BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 3,
-                          ),
-                        ];
 
 
   @override
@@ -56,44 +73,45 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
       child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withOpacity(0.2),
           ),///////
           child: SizedBox(
             //responsive.. 작은폰엔 어떻게 적용하는가
             height: 500,
             width: 300,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,          
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(),
-                    const Icon(CupertinoIcons.clock),
-                    Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")), 
-                    const Spacer(),
-                    const Icon(CupertinoIcons.arrow_2_circlepath_circle),
-                    Obx(() => Text("   ${c.value_cycle} ")),
-                    const Spacer(),
-                  ],
-                ),
+                                // Padding(padding: EdgeInsets.all(1)),
                 Container(
-                  // margin:  EdgeInsets.all(10),
-                  // padding: EdgeInsets.all(0),
-                  // decoration: BoxDecoration(
-                  //   borderRadius: BorderRadius.circular(20),
-                  //   color: Colors.grey.withOpacity(0.2),
-                  // ),
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Spacer(),
+                        StaticIcon(CupertinoIcons.clock),
+                        Obx(() => Text("   ${c.timeMinRx} : ${c.timeSecRx}")), 
+                        const Spacer(),
+                        StaticIcon(CupertinoIcons.arrow_2_circlepath_circle),
+                        Obx(() => Text("   ${c.value_cycle} ")),
+                        const Spacer(),
+                      ],
+                    ),
+                //   ),
+                ),
+                // Padding(padding: EdgeInsets.all(1)),
+                Container(
+
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
                         onPressed: () {
-                          c.decrement(c.cycle);
+                          c.decrementMin1(c.cycle);
                         },
                         icon: DecoButton(CupertinoIcons.chevron_left)
                         ),
-                      const Icon(CupertinoIcons.arrow_clockwise),
+                      StaticIcon(CupertinoIcons.arrow_clockwise),
                       Obx(() => Text("${c.cycle}")),
                       IconButton(
                         onPressed: () {
@@ -110,7 +128,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(
+                        StaticIcon(
                               CupertinoIcons.arrow_down_right_arrow_up_left),
                         IconButton(
                                 onPressed: () {
@@ -121,7 +139,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         Obx(() => Text("${c.inhale}")),
                         IconButton(
                           onPressed: () {
-                            c.decrement(c.inhale);
+                            c.decrementMin1(c.inhale);
                           },
                                 icon: DecoButton(CupertinoIcons.chevron_down),                       
                         ),
@@ -131,7 +149,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(CupertinoIcons.circle_fill),
+                        StaticIcon(CupertinoIcons.circle_fill),
                         IconButton(
                           onPressed: () {
                             c.increment(c.full);
@@ -151,7 +169,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(
+                        StaticIcon(
                             CupertinoIcons.arrow_up_left_arrow_down_right),
                         IconButton(
                           onPressed: () {
@@ -162,7 +180,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         Obx(() => Text("${c.exhale}")),
                         IconButton(
                           onPressed: () {
-                            c.decrement(c.exhale);
+                            c.decrementMin1(c.exhale);
                           },
                           icon: DecoButton(CupertinoIcons.chevron_down),                       
                         ),
@@ -172,7 +190,7 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(CupertinoIcons.circle),
+                        StaticIcon(CupertinoIcons.circle),
                         IconButton(
                           onPressed: () {
                             c.increment(c.empty);
@@ -194,18 +212,23 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
+                    Obx(() =>ElevatedButton(
                       onPressed: () {
                         print(c.value_isRunning.value);
-                        if (c.value_isRunning.value || !c.value_visible.value) {
-                          print("menu is unvisible now! ");
+                        if (c.value_isRunning.value == true && c.value_visible.value == true) {
+                          print("stop");
+                          c.stopBtn();
                         }
-                        else{
+                        else if(c.value_isRunning.value == false && c.value_visible.value == true){
+                          print("start");
                           c.startBtn();
                         }
+                        else{
+                          print("menu is unvisible now! ");
+                        }
                       },
-                      child: const Icon(Icons.play_arrow_sharp,
-                          size: 30, color: Colors.black),
+                      child: c.value_isRunning.value ? Icon(Icons.stop): const Icon(Icons.play_arrow_sharp,
+                          size: 30),
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(15),
@@ -213,24 +236,8 @@ class MenuWidget extends StatelessWidget with WidgetsBindingObserver{
                         onPrimary: Colors.white, // <-- Splash color
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (!c.value_visible.value) {
-                          print("menu is unvisible now! ");
-                        }
-                        else{
-                          c.stopBtn();
-                        }
-                      },
-                      child:
-                          const Icon(Icons.stop, size: 30,color:Colors.black),
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(15),
-                        primary: Colors.transparent, // <-- Button color
-                        onPrimary: Colors.white, // <-- Splash color
-                      ),
                     )
+
                   ],
                 ),
               ],
