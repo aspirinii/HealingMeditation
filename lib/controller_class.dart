@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-import 'VibCol.dart';
+import 'vib_func.dart';
 import 'dart:ui';
 import 'dart:io' show Platform;
 import 'package:wakelock/wakelock.dart';
-
-
 
 class WindowsController extends GetxController {
   double physicalWidth = Get.width;
@@ -30,8 +28,6 @@ class WindowsController extends GetxController {
   late double safeWidth = (logicalWidth - paddingLeft - paddingRight);
   late double safeHeight = (logicalHeight - paddingTop - paddingBottom);
   late double safeMinSize = min(safeWidth, safeHeight);
-  
-  
 }
 
 class HomeBinding extends Bindings {
@@ -41,7 +37,7 @@ class HomeBinding extends Bindings {
   }
 }
 
-class LifeController  extends FullLifeCycleController with FullLifeCycleMixin{
+class LifeController extends FullLifeCycleController with FullLifeCycleMixin {
   final Controller c = Get.put(Controller());
 
   @override
@@ -55,10 +51,10 @@ class LifeController  extends FullLifeCycleController with FullLifeCycleMixin{
   // Mandatory
   @override
   void onInactive() {
-        // 앱이 비활성화 상태이고 사용자의 입력을 받지 않습니다.
-        // ios에서는 포 그라운드 비활성 상태에서 실행되는 앱 또는 Flutter 호스트 뷰에 해당합니다.
-        // 안드로이드에서는 화면 분할 앱, 전화 통화, PIP 앱, 시스템 대화 상자 또는 다른 창과 같은 다른 활동이 집중되면 앱이이 상태로 전환됩니다.
-        // inactive가 발생되고 얼마후 pasued가 발생합니다.
+    // 앱이 비활성화 상태이고 사용자의 입력을 받지 않습니다.
+    // ios에서는 포 그라운드 비활성 상태에서 실행되는 앱 또는 Flutter 호스트 뷰에 해당합니다.
+    // 안드로이드에서는 화면 분할 앱, 전화 통화, PIP 앱, 시스템 대화 상자 또는 다른 창과 같은 다른 활동이 집중되면 앱이이 상태로 전환됩니다.
+    // inactive가 발생되고 얼마후 pasued가 발생합니다.
     print('HomeController - onInative called');
     c.stopBtn();
   }
@@ -66,9 +62,9 @@ class LifeController  extends FullLifeCycleController with FullLifeCycleMixin{
   // Mandatory
   @override
   void onPaused() {
-        // 앱이 현재 사용자에게 보이지 않고, 사용자의 입력을 받지 않으며, 백그라운드에서 동작 중입니다.
-        // 안드로이드의 onPause()와 동일합니다.
-        // 응용 프로그램이 이 상태에 있으면 엔진은 Window.onBeginFrame 및 Window.onDrawFrame 콜백을 호출하지 않습니다.
+    // 앱이 현재 사용자에게 보이지 않고, 사용자의 입력을 받지 않으며, 백그라운드에서 동작 중입니다.
+    // 안드로이드의 onPause()와 동일합니다.
+    // 응용 프로그램이 이 상태에 있으면 엔진은 Window.onBeginFrame 및 Window.onDrawFrame 콜백을 호출하지 않습니다.
 
     print('HomeController - onPaused called');
     c.stopBtn();
@@ -80,12 +76,9 @@ class LifeController  extends FullLifeCycleController with FullLifeCycleMixin{
     print('HomeController - onResumed called');
     c.value_visible.value = true;
   }
-
-
 }
 
 class Controller extends GetxController with GetSingleTickerProviderStateMixin {
-
   RxBool value_visible = true.obs;
   RxBool complete_star_visible = false.obs;
   RxBool value_isRunning = false.obs;
@@ -129,6 +122,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     prefs.setInt('exhale', exhale.value);
     prefs.setInt('empty', empty.value);
   }
+
   @override
   void onInit() {
     value_controller = AnimationController(vsync: this);
@@ -153,7 +147,6 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     value_controller.duration = Duration(milliseconds: inhalefullforAni);
   }
 
-
   void value_defineControllerDuration2() {
     // int exhaleforAni = (exhale.value + empty.value) * 1000;
     int exhaleforAni = (exhale.value) * 1000;
@@ -174,10 +167,10 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
         yellowShimmer.value = false;
         await Future.delayed(Duration(milliseconds: fullforAni));
         shimmerEn.value = false;
-        
+
         value_defineControllerDuration2();
         await value_controller.reverse().orCancel;
-        
+
         shimmerEn.value = true;
         yellowShimmer.value = true;
         await Future.delayed(Duration(milliseconds: emptyforAni));
@@ -206,10 +199,10 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   }
 
   void stopTimer() {
-    if (value_timer != null && value_timer.isActive){
+    if (value_timer != null && value_timer.isActive) {
       value_timer.cancel();
-    print("value_tiemr is active ${value_timer.isActive}");
-    }else{
+      print("value_tiemr is active ${value_timer.isActive}");
+    } else {
       print("value timer is not active ");
     }
     timeSum();
@@ -225,9 +218,10 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     int value_exhale = exhale.value;
     int value_full = full.value;
     int value_empty = empty.value;
-    if (Platform.isAndroid || Platform.isIOS){
-      HapticVib(value_cycle1, value_inhale, value_full, value_exhale, value_empty);}
-    else{
+    if (Platform.isAndroid || Platform.isIOS) {
+      HapticVib(
+          value_cycle1, value_inhale, value_full, value_exhale, value_empty);
+    } else {
       print("it is not mobile");
     }
   }
@@ -273,8 +267,8 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     timeMinRx.value = timeMin;
     timeSecRx.value = timeSec % 60;
   }
-  
-  Congratulations(){
+
+  Congratulations() {
     value_isRunning.value = true;
     complete_star_visible.value = true;
     const oneSec = Duration(seconds: 1);
@@ -284,13 +278,11 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
         value_visible.value = true;
         value_isRunning.value = false;
         time.cancel();
-      } else if(staytime == 1 ){
-        complete_star_visible.value  = false;
+      } else if (staytime == 1) {
+        complete_star_visible.value = false;
         staytime--;
-        
-      }else{
+      } else {
         staytime--;
-
       }
     });
   }
@@ -302,16 +294,15 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
   void startBtn() {
     // if (value_isRunning.value || !value_visible.value) {
     //   return;}
-      value_isRunning.value = true;
-      value_playAnimation();
-      timerWork(); // vibration
-      startTimer();
-      value_visible.value = false;
-      complete_star_visible.value  = false;
-    
+    value_isRunning.value = true;
+    value_playAnimation();
+    timerWork(); // vibration
+    startTimer();
+    value_visible.value = false;
+    complete_star_visible.value = false;
   }
 
-  void stopBtn() async{
+  void stopBtn() async {
     print("stopBtn start ---------------------------------");
     // if (!value_visible.value) {
     //   return;
@@ -320,18 +311,16 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
     value_visible.value = true;
     stopTimer();
 
-    if (Platform.isAndroid || Platform.isIOS){
-        vibStop();
-    }
-    else{
+    if (Platform.isAndroid || Platform.isIOS) {
+      vibStop();
+    } else {
       print("it is not mobile");
-    } 
+    }
 
     // vibStop();
     await stopAnimation();
     value_controller.reverse(from: 0.3);
     print("stopBtn End ---------------------------------");
-
   }
 
   Future<void> stopAnimation() async {
@@ -352,7 +341,7 @@ class Controller extends GetxController with GetSingleTickerProviderStateMixin {
       } on TickerCanceled {
         // the animation got canceled, probably because we were disposed
       }
-    }while( value_controller.isAnimating);
+    } while (value_controller.isAnimating);
     // value_controller.reverse(from : 0.1);
     shimmerEn.value = false;
   }
